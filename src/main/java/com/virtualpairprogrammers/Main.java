@@ -29,16 +29,19 @@ public class Main {
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
 		JavaRDD<String> originalLogMessages = sc.parallelize(inputData);
-				
-		JavaPairRDD<String, String> pairRdd = originalLogMessages.mapToPair(rawValue -> {
+
+		JavaPairRDD<String, Long> pairRdd = originalLogMessages.mapToPair(rawValue -> {
 			String[] columns = rawValue.split(":");
 			String level = columns[0];
-			String date = columns[1];
-			
-			return new Tuple2<String, String>(level, date);
-			
+
+			return new Tuple2<>(level, 1L);
+
 		});
-		
+
+		JavaPairRDD<String, Long> sumsRdd = pairRdd.reduceByKey((value1, value2) -> value1 + value2);
+
+		sumsRdd.foreach(tuple -> System.out.println(tuple._1 + " has " + tuple._2 + " instances"));
+
 		sc.close();
 
 	}
