@@ -24,20 +24,9 @@ public class Main {
 		SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
-		JavaRDD<Integer> myRdd = sc.parallelize(inputData);
-		
-		Integer result = myRdd.reduce((value1,value2) -> value1 + value2);
-		System.out.println("result is : " + result);
-		
-		JavaRDD<Double> sqrtRdd = myRdd.map(value -> Math.sqrt(value));
-		sqrtRdd.collect().forEach(System.out::println);
-		
-		//how many elements in sqrtRdd using map and reduce
-		JavaRDD<Long> singleIntegerRdd = sqrtRdd.map(value-> 1L);
-		Long count = singleIntegerRdd.reduce((value1,value2) -> value1 + value2);
-		
-		System.out.println("Number of elements in sqrtRdd is : " +count);
-		
+		JavaRDD<Integer> originalIntegers = sc.parallelize(inputData);
+				
+		JavaRDD<IntegerWithSquareRoot> sqrtRdd = originalIntegers.map(value -> new IntegerWithSquareRoot(value));
 		
 		sc.close();
 
