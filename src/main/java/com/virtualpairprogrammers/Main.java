@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -15,20 +16,28 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		List<Integer> inputData = new ArrayList<>();
-		inputData.add(35);
-		inputData.add(12);
-		inputData.add(90);
-		inputData.add(20);
+		List<String> inputData = new ArrayList<>();
+		inputData.add("WARN: Tuesday 4 September 0405");
+		inputData.add("ERROR: Tuesday 4 September 0408");
+		inputData.add("FATAL: Tuesday 4 September 1632");
+		inputData.add("ERROR: Tuesday 4 September 1854");
+		inputData.add("WARN: Tuesday 4 September 1942");
 
 		Logger.getLogger("org.apache").setLevel(Level.WARN);
 
 		SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
-		JavaRDD<Integer> originalIntegers = sc.parallelize(inputData);
+		JavaRDD<String> originalLogMessages = sc.parallelize(inputData);
 				
-		JavaRDD<Tuple2<Integer, Double>> sqrtRdd = originalIntegers.map(value -> new Tuple2<>(value, Math.sqrt(value)));
+		JavaPairRDD<String, String> pairRdd = originalLogMessages.mapToPair(rawValue -> {
+			String[] columns = rawValue.split(":");
+			String level = columns[0];
+			String date = columns[1];
+			
+			return new Tuple2<String, String>(level, date);
+			
+		});
 		
 		sc.close();
 
