@@ -9,6 +9,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import scala.Tuple2;
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -26,7 +28,7 @@ public class Main {
 
 		JavaRDD<Integer> originalIntegers = sc.parallelize(inputData);
 				
-		JavaRDD<IntegerWithSquareRoot> sqrtRdd = originalIntegers.map(value -> new IntegerWithSquareRoot(value));
+		JavaRDD<Tuple2<Integer, Double>> sqrtRdd = originalIntegers.map(value -> new Tuple2<>(value, Math.sqrt(value)));
 		
 		sc.close();
 
