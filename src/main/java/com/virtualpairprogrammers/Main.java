@@ -26,10 +26,11 @@ public class Main {
 		SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
-		JavaRDD<String> sentences = sc.parallelize(inputData);
-		JavaRDD<String> words = sentences.flatMap(value -> Arrays.asList(value.split(" ")).iterator());
-		JavaRDD filteredWords =words.filter(word -> word.length() >1);
-		filteredWords.collect().forEach(System.out::println);
+		sc.parallelize(inputData)
+		.flatMap(value -> Arrays.asList(value.split(" ")).iterator())
+		.filter(word -> word.length() >1)
+		.collect().forEach(System.out::println);
+		
 		sc.close();
 
 	}
