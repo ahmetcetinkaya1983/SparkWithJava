@@ -28,7 +28,8 @@ public class Main {
 
 		JavaRDD<String> sentences = sc.parallelize(inputData);
 		JavaRDD<String> words = sentences.flatMap(value -> Arrays.asList(value.split(" ")).iterator());
-		words.collect().forEach(System.out::println);
+		JavaRDD filteredWords =words.filter(word -> word.length() >1);
+		filteredWords.collect().forEach(System.out::println);
 		sc.close();
 
 	}
