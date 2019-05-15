@@ -21,7 +21,7 @@ public class Main {
 		SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
-		JavaRDD<String> initialRdd = sc.textFile("src/main/resources/subtitles/input.txt");
+		JavaRDD<String> initialRdd = sc.textFile("src/main/resources/subtitles/input.txt"); 
 
 		JavaRDD<String> lettersOnlyRdd = initialRdd.map(sentence -> sentence.replaceAll("[^a-zA-z\\s]", "").toLowerCase());
 
