@@ -47,6 +47,8 @@ public class Main {
 		dataset.createOrReplaceTempView("logging_table");
 		Dataset<Row> results =spark.sql("select level, date_format(datetime, 'MMM') as month from logging_table");
 		
+		results.createOrReplaceTempView("logging_table");
+		results = spark.sql("select level, month, count(1) from logging_table group by level, month");
 		
 		results.show();
 	}
