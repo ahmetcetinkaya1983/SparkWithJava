@@ -24,19 +24,16 @@ public class Main {
 		SparkSession spark = SparkSession.builder().appName("startingSpark").master("local[*]")
 												   .config("spark.sql.warehouse.dir", "file:///c:/tmp/")
 												   .getOrCreate();
+		
 		Dataset<Row> dataset = spark.read().option("header", true).csv("src/main/resources/exams/students.csv");
-		dataset.show();
 		
-		long numberOfRows = dataset.count();
-		System.out.println("there are "+numberOfRows+" records");
+		//Dataset<Row> modernArtResults = dataset.filter("subject = 'Modern Art' AND year >= 2007 ");
 		
-		Row firstRow = dataset.first();
-		String subject = firstRow.get(2).toString();// get subject of firstrow
-		//String subject = firstRow.getAs("subject").toString();// we can use getAs(columnName) too
-		System.out.println(subject);
+		Dataset<Row> modernArtResults = dataset.filter(row -> row.getAs("subject").equals("Modern Art")
+																 && Integer.parseInt(row.getAs("year")) >= 2007);
 		
-		int year =Integer.parseInt(firstRow.getAs("year"));
-		System.out.println("the year was "+year);
+		modernArtResults.show();
+		
 
 	}
 }
