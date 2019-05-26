@@ -25,31 +25,18 @@ public class Main {
 												   .config("spark.sql.warehouse.dir", "file:///c:/tmp/")
 												   .getOrCreate();
 		
-		//Dataset<Row> dataset = spark.read().option("header", true).csv("src/main/resources/exams/students.csv");
 		
-		List<Row> inMemory = new ArrayList<>();
+		Dataset<Row> dataset = spark.read().option("header", true).csv("src/main/resources/biglog.txt");
 		
-		inMemory.add(RowFactory.create("WARN", "2016-12-31 04:19:32"));
-		inMemory.add(RowFactory.create("FATAL", "2016-12-31 03:22:34"));
-		inMemory.add(RowFactory.create("WARN", "2016-12-31 03:21:21"));
-		inMemory.add(RowFactory.create("INFO", "2015-4-21 14:32:21"));
-		inMemory.add(RowFactory.create("FATAL","2015-4-21 19:23:20"));
-		
-		StructField[] fields = new StructField[]  {
-				new StructField("level", DataTypes.StringType, false, Metadata.empty()),
-				new StructField("datetime", DataTypes.StringType, false, Metadata.empty())
-		};
-		
-		StructType schema = new StructType(fields);
-		Dataset<Row> dataset = spark.createDataFrame(inMemory, schema );
-		
-		//Grouping and aggregation
 		dataset.createOrReplaceTempView("logging_table");
 		Dataset<Row> results =spark.sql("select level, date_format(datetime, 'MMM') as month from logging_table");
 		
 		results.createOrReplaceTempView("logging_table");
-		results = spark.sql("select level, month, count(1) from logging_table group by level, month");
+		results = spark.sql("select level, month, count(1)as total from logging_table group by level, month");
+		results.show(200);
 		
-		results.show();
+		results.createOrReplaceTempView("results_table");
+		Dataset<Row> totals = spark.sql("select sum(total) from results_table");
+		totals.show();
 	}
 }
