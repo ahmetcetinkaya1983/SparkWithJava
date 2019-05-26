@@ -1,18 +1,12 @@
 package com.virtualpairprogrammers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import scala.Tuple2;
+import static org.apache.spark.sql.functions.*;
 
 public class Main {
 
@@ -29,8 +23,11 @@ public class Main {
 		
 		//Dataset<Row> modernArtResults = dataset.filter("subject = 'Modern Art' AND year >= 2007 ");
 		
-		Dataset<Row> modernArtResults = dataset.filter(row -> row.getAs("subject").equals("Modern Art")
-																 && Integer.parseInt(row.getAs("year")) >= 2007);
+		//Dataset<Row> modernArtResults = dataset.filter(row -> row.getAs("subject").equals("Modern Art")
+		//														 && Integer.parseInt(row.getAs("year")) >= 2007);
+		
+		Dataset<Row> modernArtResults = dataset.filter(col("subject").equalTo("Modern Art")
+				                                                     .and(col("year").geq(2007)));
 		
 		modernArtResults.show();
 		
