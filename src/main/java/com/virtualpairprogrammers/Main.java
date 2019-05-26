@@ -26,8 +26,11 @@ public class Main {
 		//Dataset<Row> modernArtResults = dataset.filter(row -> row.getAs("subject").equals("Modern Art")
 		//														 && Integer.parseInt(row.getAs("year")) >= 2007);
 		
-		Dataset<Row> modernArtResults = dataset.filter(col("subject").equalTo("Modern Art")
-				                                                     .and(col("year").geq(2007)));
+		//Dataset<Row> modernArtResults = dataset.filter(col("subject").equalTo("Modern Art")
+		//		                                                     .and(col("year").geq(2007)));
+		
+		dataset.createOrReplaceTempView("my_students_table");
+		Dataset<Row> modernArtResults = spark.sql("select * from my_students_table where subject = 'Modern Art' and year >= 2007");
 		
 		modernArtResults.show();
 		
