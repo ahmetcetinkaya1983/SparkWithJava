@@ -45,12 +45,9 @@ public class Main {
 		
 		//Grouping and aggregation
 		dataset.createOrReplaceTempView("logging_table");
-		Dataset<Row> results =spark.sql("select level, collect_list(datetime) from logging_table group by level order by level");
+		Dataset<Row> results =spark.sql("select level, date_format(datetime, 'MMM') as month from logging_table");
 		
 		
 		results.show();
-		
-		
-
 	}
 }
