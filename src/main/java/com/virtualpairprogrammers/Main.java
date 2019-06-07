@@ -38,7 +38,13 @@ public class Main {
 						);
 						*/
 		
-		dataset = dataset.select(col("level"), date_format(col("datetime"),"MMMM").as("month"));
+		dataset = dataset.select(col("level"), 	date_format(col("datetime"),"MMMM").alias("month"), 
+												date_format(col("datetime"),"M").alias("monthnum").cast(DataTypes.IntegerType));
+		
+		dataset = dataset.groupBy(col("level"), col("month"), col("monthnum")).count();
+		dataset = dataset.orderBy(col("monthnum"), col("level"));
+		dataset = dataset.drop(col("monthnum"));
+		
 		dataset.show(100);
 
 	}
