@@ -31,11 +31,13 @@ public class Main {
 		
 		Dataset<Row> dataset = spark.read().option("header", true).csv("src/main/resources/exams/students.csv");
 		
-		//more aggregatiobs eg. max, avg .. etc using .agg() function in the API
-		dataset = dataset.groupBy("subject").agg(max(col("score").cast(DataTypes.IntegerType)).alias("max score"),
-												 min(col("score").cast(DataTypes.IntegerType)).alias("min score"),
-												 avg(col("score").cast(DataTypes.IntegerType)).alias("avg score"));
 		
+		//more aggregatiobs eg. max, avg .. etc using .agg() function in the API
+		//dataset = dataset.groupBy("subject").agg(max(col("score").cast(DataTypes.IntegerType)).alias("max score"),
+		//										 min(col("score").cast(DataTypes.IntegerType)).alias("min score"),
+		//										 avg(col("score").cast(DataTypes.IntegerType)).alias("avg score"));
+		dataset = dataset.groupBy("subject").pivot("year").agg(round(avg(col("score")), 2).alias("average"),
+															   round(stddev(col("score")), 2).alias("stddev")).orderBy("subject");
 		dataset.show();
 
 	}
