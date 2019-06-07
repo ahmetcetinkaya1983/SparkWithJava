@@ -13,6 +13,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import static org.apache.spark.sql.functions.*;
 
 public class Main {
 
@@ -28,13 +29,17 @@ public class Main {
 		
 		Dataset<Row> dataset = spark.read().option("header", true).csv("src/main/resources/biglog.txt");
 		
-		dataset.createOrReplaceTempView("logging_table");
+		//dataset.createOrReplaceTempView("logging_table");
 		
+		/*
 		Dataset<Row> results = spark.sql(
 				"select level, date_format(datetime, 'MMMM') as month, count(1) as total "+
 				"from logging_table group by level, month order by cast(first(date_format(datetime, 'M')) as int), level"
 						);
-		results.show(100);
+						*/
+		
+		dataset = dataset.select(col("level"), date_format(col("datetime"),"MMMM").as("month"));
+		dataset.show(100);
 
 	}
 }
